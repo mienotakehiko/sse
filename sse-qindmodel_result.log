@@ -1,0 +1,162 @@
+Linear part: No equation.
+Convergent part:
+dec(enc(x,k),k) = x
+Search(BuildIndex(AP,w,kT),Trapdoor(w,kT)) = AP
+Completing equations...
+Completed equations:
+Search(BuildIndex(AP,w,kT),Trapdoor(w,kT)) = AP
+dec(enc(x,k),k) = x
+Biprocess 0 (that is, the initial process):
+(
+    {1}new W: channel;
+    {2}out(W, (w1,w2,w3,w4));
+    {3}out(m1, w1);
+    {4}out(m2, (w1,w2));
+    {5}out(m3, (w1,w2,w3));
+    {6}out(m4, w4);
+    {7}let c1: bitstring = enc(m1,skey) in
+    {8}let c2: bitstring = enc(m2,skey) in
+    {9}let c3: bitstring = enc(m3,skey) in
+    {10}let c4: bitstring = enc(m4,skey) in
+    {11}new C: channel;
+    {12}out(C, (c1,c2,c3,c4));
+    {13}new APw1: channel;
+    {14}new APw2: channel;
+    {15}new APw3: channel;
+    {16}new APw4: channel;
+    {17}out(APw1, c1);
+    {18}out(APw1, c2);
+    {19}out(APw1, c3);
+    {20}out(APw2, c2);
+    {21}out(APw2, c3);
+    {22}out(APw3, c3);
+    {23}out(APw4, c4);
+    {24}let Indexw1: bitstring = BuildIndex(APw1,w1,skeyT) in
+    {25}let Indexw2: bitstring = BuildIndex(APw2,w2,skeyT) in
+    {26}let Indexw3: bitstring = BuildIndex(APw3,w3,skeyT) in
+    {27}let Indexw4: bitstring = BuildIndex(APw4,w4,skeyT) in
+    {28}new I: channel;
+    {29}out(I, (Indexw1,Indexw2,Indexw3,Indexw4));
+    {30}out(CH, (W,C,I));
+    {31}out(CHquery, (w1,Trapdoor(w1,skeyT)));
+    {32}out(CHquery, (w2,Trapdoor(w2,skeyT)))
+) | (
+    {33}let Word0: bitstring = w3 in
+    {34}let Word1: bitstring = w4 in
+    {35}let tb: bitstring = Trapdoor(choice[Word0,Word1],skeyT) in
+    {36}out(CHchallenge, (tb,Word0,Word1))
+)
+
+-- Observational equivalence in biprocess 1 (that is, biprocess 0, with let moved downwards):
+(
+    {1}new W: channel;
+    {2}out(W, (w1,w2,w3,w4));
+    {3}out(m1, w1);
+    {4}out(m2, (w1,w2));
+    {5}out(m3, (w1,w2,w3));
+    {6}out(m4, w4);
+    {11}new C: channel;
+    {10}let c4: bitstring = enc(m4,skey) in
+    {9}let c3: bitstring = enc(m3,skey) in
+    {8}let c2: bitstring = enc(m2,skey) in
+    {7}let c1: bitstring = enc(m1,skey) in
+    {12}out(C, (c1,c2,c3,c4));
+    {13}new APw1: channel;
+    {14}new APw2: channel;
+    {15}new APw3: channel;
+    {16}new APw4: channel;
+    {17}out(APw1, c1);
+    {18}out(APw1, c2);
+    {19}out(APw1, c3);
+    {20}out(APw2, c2);
+    {21}out(APw2, c3);
+    {22}out(APw3, c3);
+    {23}out(APw4, c4);
+    {28}new I: channel;
+    {27}let Indexw4: bitstring = BuildIndex(APw4,w4,skeyT) in
+    {26}let Indexw3: bitstring = BuildIndex(APw3,w3,skeyT) in
+    {25}let Indexw2: bitstring = BuildIndex(APw2,w2,skeyT) in
+    {24}let Indexw1: bitstring = BuildIndex(APw1,w1,skeyT) in
+    {29}out(I, (Indexw1,Indexw2,Indexw3,Indexw4));
+    {30}out(CH, (W,C,I));
+    {31}out(CHquery, (w1,Trapdoor(w1,skeyT)));
+    {32}out(CHquery, (w2,Trapdoor(w2,skeyT)))
+) | (
+    {34}let Word1: bitstring = w4 in
+    {33}let Word0: bitstring = w3 in
+    {35}let tb: bitstring = Trapdoor(choice[Word0,Word1],skeyT) in
+    {36}out(CHchallenge, (tb,Word0,Word1))
+)
+
+Translating the process into Horn clauses...
+Termination warning: v ≠ v_1 && attacker2(v_2,v) && attacker2(v_2,v_1) -> bad
+Selecting 0
+Termination warning: v ≠ v_1 && attacker2(v,v_2) && attacker2(v_1,v_2) -> bad
+Selecting 0
+Completing...
+Termination warning: v ≠ v_1 && attacker2(v_2,v) && attacker2(v_2,v_1) -> bad
+Selecting 0
+Termination warning: v ≠ v_1 && attacker2(v,v_2) && attacker2(v_1,v_2) -> bad
+Selecting 0
+200 rules inserted. Base: 172 rules (61 with conclusion selected). Queue: 22 rules.
+goal reachable: bad
+
+Derivation:
+
+1. An output on channel APw3[] (resp. APw3[]) may be triggered at {22}.
+output2(APw3[],APw3[]).
+
+2. The message (Trapdoor(w3[],skeyT[]),w3[],w4[]) (resp. (Trapdoor(w4[],skeyT[]),w3[],w4[])) may be sent to the attacker at output {36}.
+attacker2((Trapdoor(w3[],skeyT[]),w3[],w4[]),(Trapdoor(w4[],skeyT[]),w3[],w4[])).
+
+3. By 2, the attacker may know (Trapdoor(w3[],skeyT[]),w3[],w4[]) (resp. (Trapdoor(w4[],skeyT[]),w3[],w4[])).
+Using the function 1-proj-3-tuple the attacker may obtain Trapdoor(w3[],skeyT[]) (resp. Trapdoor(w4[],skeyT[])).
+attacker2(Trapdoor(w3[],skeyT[]),Trapdoor(w4[],skeyT[])).
+
+4. The message (W[],C[],I[]) (resp. (W[],C[],I[])) may be sent to the attacker at output {30}.
+attacker2((W[],C[],I[]),(W[],C[],I[])).
+
+5. By 4, the attacker may know (W[],C[],I[]) (resp. (W[],C[],I[])).
+Using the function 3-proj-3-tuple the attacker may obtain I[] (resp. I[]).
+attacker2(I[],I[]).
+
+6. The message (BuildIndex(APw1[],w1[],skeyT[]),BuildIndex(APw2[],w2[],skeyT[]),BuildIndex(APw3[],w3[],skeyT[]),BuildIndex(APw4[],w4[],skeyT[])) may be sent on channel I[] (resp. message (BuildIndex(APw1[],w1[],skeyT[]),BuildIndex(APw2[],w2[],skeyT[]),BuildIndex(APw3[],w3[],skeyT[]),BuildIndex(APw4[],w4[],skeyT[])) on channel I[]) at output {29}.
+mess2(I[],(BuildIndex(APw1[],w1[],skeyT[]),BuildIndex(APw2[],w2[],skeyT[]),BuildIndex(APw3[],w3[],skeyT[]),BuildIndex(APw4[],w4[],skeyT[])),I[],(BuildIndex(APw1[],w1[],skeyT[]),BuildIndex(APw2[],w2[],skeyT[]),BuildIndex(APw3[],w3[],skeyT[]),BuildIndex(APw4[],w4[],skeyT[]))).
+
+7. By 5, the attacker may have the channel I[] (resp. I[]).
+By 6, the message (BuildIndex(APw1[],w1[],skeyT[]),BuildIndex(APw2[],w2[],skeyT[]),BuildIndex(APw3[],w3[],skeyT[]),BuildIndex(APw4[],w4[],skeyT[])) (resp. (BuildIndex(APw1[],w1[],skeyT[]),BuildIndex(APw2[],w2[],skeyT[]),BuildIndex(APw3[],w3[],skeyT[]),BuildIndex(APw4[],w4[],skeyT[]))) may be sent on this channel.
+So the attacker may obtain the message (BuildIndex(APw1[],w1[],skeyT[]),BuildIndex(APw2[],w2[],skeyT[]),BuildIndex(APw3[],w3[],skeyT[]),BuildIndex(APw4[],w4[],skeyT[])) (resp. (BuildIndex(APw1[],w1[],skeyT[]),BuildIndex(APw2[],w2[],skeyT[]),BuildIndex(APw3[],w3[],skeyT[]),BuildIndex(APw4[],w4[],skeyT[]))) by listening on this channel.
+attacker2((BuildIndex(APw1[],w1[],skeyT[]),BuildIndex(APw2[],w2[],skeyT[]),BuildIndex(APw3[],w3[],skeyT[]),BuildIndex(APw4[],w4[],skeyT[])),(BuildIndex(APw1[],w1[],skeyT[]),BuildIndex(APw2[],w2[],skeyT[]),BuildIndex(APw3[],w3[],skeyT[]),BuildIndex(APw4[],w4[],skeyT[]))).
+
+8. By 7, the attacker may know (BuildIndex(APw1[],w1[],skeyT[]),BuildIndex(APw2[],w2[],skeyT[]),BuildIndex(APw3[],w3[],skeyT[]),BuildIndex(APw4[],w4[],skeyT[])) (resp. (BuildIndex(APw1[],w1[],skeyT[]),BuildIndex(APw2[],w2[],skeyT[]),BuildIndex(APw3[],w3[],skeyT[]),BuildIndex(APw4[],w4[],skeyT[]))).
+Using the function 3-proj-4-tuple the attacker may obtain BuildIndex(APw3[],w3[],skeyT[]) (resp. BuildIndex(APw3[],w3[],skeyT[])).
+attacker2(BuildIndex(APw3[],w3[],skeyT[]),BuildIndex(APw3[],w3[],skeyT[])).
+
+9. By 8, the attacker may know BuildIndex(APw3[],w3[],skeyT[]) (resp. BuildIndex(APw3[],w3[],skeyT[])).
+By 3, the attacker may know Trapdoor(w3[],skeyT[]) (resp. Trapdoor(w4[],skeyT[])).
+Using the function Search the attacker may obtain APw3[] (resp. Search(BuildIndex(APw3[],w3[],skeyT[]),Trapdoor(w4[],skeyT[]))).
+attacker2(APw3[],Search(BuildIndex(APw3[],w3[],skeyT[]),Trapdoor(w4[],skeyT[]))).
+
+10. By 9, the attacker may know APw3[] (resp. Search(BuildIndex(APw3[],w3[],skeyT[]),Trapdoor(w4[],skeyT[]))).
+So the attacker may trigger an input on this channel.
+input2(APw3[],Search(BuildIndex(APw3[],w3[],skeyT[]),Trapdoor(w4[],skeyT[]))).
+
+11. By 10, an input may be triggered on channel APw3[] (resp. Search(BuildIndex(APw3[],w3[],skeyT[]),Trapdoor(w4[],skeyT[]))).
+By 1, an output may be triggered on channel APw3[] (resp. APw3[]).
+We have Search(BuildIndex(APw3[],w3[],skeyT[]),Trapdoor(w4[],skeyT[])) ≠ APw3[].
+So the attacker may know whether the communication succeeds, which may allow it to distinguish cases.
+bad.
+
+
+Could not find a trace corresponding to this derivation.
+RESULT Observational equivalence cannot be proved.
+Looking for simplified processes ...
+No simplified process found.
+
+--------------------------------------------------------------
+Verification summary:
+
+Observational equivalence cannot be proved.
+
+--------------------------------------------------------------
+
