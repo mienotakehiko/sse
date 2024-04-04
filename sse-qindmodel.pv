@@ -1,0 +1,68 @@
+(* Q-IND game verification Target: SSE in Curtmola *)
+free m1:channel[private].
+free m2:channel[private].
+free m3:channel[private].
+free m4:channel[private].
+free w1 :bitstring[private].
+free w2 :bitstring[private].
+free w3 :bitstring[private].
+free w4 :bitstring[private].
+
+free CH:channel.
+free CHquery:channel.
+free CHchallenge:channel.
+
+free skey :bitstring[private].
+free skeyT :bitstring[private].
+
+fun enc(channel, bitstring):bitstring.
+fun dec(bitstring, bitstring):channel.
+equation forall x:channel, k:bitstring; dec(enc(x,k),k) = x. 
+
+fun BuildIndex(channel, bitstring, bitstring):bitstring.
+fun Trapdoor(bitstring, bitstring):bitstring.
+fun Search(bitstring,bitstring):channel.
+equation forall w:bitstring, AP:channel, kT:bitstring; Search(BuildIndex(AP,w,kT),Trapdoor(w,kT)) = AP.
+
+let Challenge( Word0:bitstring,Word1:bitstring ) =
+ let tb = Trapdoor(choice[Word0,Word1],skeyT) in
+ out(CHchallenge,(tb,Word0,Word1)).
+
+process
+(
+   new W :channel;
+   out(W,(w1,w2,w3,w4));
+
+   out(m1,(w1));
+   out(m2,(w1,w2));
+   out(m3,(w1,w2,w3));
+   out(m4,(w4));
+
+   let c1=enc(m1,skey) in
+   let c2=enc(m2,skey) in
+   let c3=enc(m3,skey) in
+   let c4=enc(m4,skey) in
+   new C :channel;
+   out(C,(c1,c2,c3,c4));
+
+   new APw1 :channel;
+   new APw2 :channel;
+   new APw3 :channel;
+   new APw4 :channel;
+   out(APw1,c1);out(APw1,c2);out(APw1,c3);
+   out(APw2,c2);out(APw2,c3);
+   out(APw3,c3);
+   out(APw4,c4);
+
+   let Indexw1=BuildIndex(APw1,w1,skeyT) in
+   let Indexw2=BuildIndex(APw2,w2,skeyT) in
+   let Indexw3=BuildIndex(APw3,w3,skeyT) in
+   let Indexw4=BuildIndex(APw4,w4,skeyT) in
+   new I :channel;
+   out(I,(Indexw1,Indexw2,Indexw3,Indexw4));
+
+   out(CH,( W, C, I ));
+
+   out(CHquery,(w1,Trapdoor(w1,skeyT)));
+   out(CHquery,(w2,Trapdoor(w2,skeyT)))
+)  |Challenge(w3,w4)
