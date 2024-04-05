@@ -1,99 +1,84 @@
 (* SSE-IND game verification Target: SSE in Curtmola *)
 set traceDisplay = long.
 
-free ch:channel.
-free m1:bitstring [private].
-free m2:bitstring [private].
-free m3:bitstring [private].
-free m4:bitstring [private].
-free m5:bitstring [private].
+free m01:channel.
+free m02:channel.
+free m03:channel.
+free m04:channel.
+free m11:channel.
+free m12:channel.
+free m13:channel.
+free m14:channel.
+free w01 :bitstring.
+free w02 :bitstring.
+free w03 :bitstring.
+free w04 :bitstring.
+free w11 :bitstring.
+free w12 :bitstring.
+free w13 :bitstring.
+free w14 :bitstring.
 
-const w1:bitstring[private].
-const w2:bitstring[private].
+free skey  :bitstring[private].
+free skeyT :bitstring[private].
 
-free w3:bitstring[private].
-free w4:bitstring [private].
-free w5:bitstring [private].
-free k1:bitstring [private].
-free k2:bitstring [private].
+free CH:channel.
 
-event SUCCESS1.
-event SUCCESS2.
-event SUCCESS3.
-event SUCCESS4.
+fun enc(channel, bitstring):bitstring.
+fun dec(bitstring, bitstring):channel.
+equation forall x:channel, k:bitstring; dec(enc(x,k),k) = x. 
 
-type trapdoor.
-fun maketrap(bitstring,bitstring):trapdoor.
-table Index(trapdoor,nat).
-table angouID(nat,bitstring).
+fun BuildIndex(channel, bitstring, bitstring):bitstring.
+fun Trapdoor(bitstring, bitstring):bitstring.
+fun Search(bitstring,bitstring):channel.
+equation forall w:bitstring, Ap:channel, kT:bitstring; Search(BuildIndex(Ap,w,kT),Trapdoor(w,kT)) = Ap.
 
-fun enc(bitstring, bitstring):bitstring.
-fun dec(bitstring, bitstring):bitstring.
-equation forall x:bitstring, k:bitstring; dec(enc(x,k),k) = x. 
+process
+(
+   new W0:channel;
+   new W1:channel;
+   out(W0,(w01,w02,w03,w04));
+   out(W1,(w11,w12,w13,w14));
 
-fun con(bitstring,nat):bitstring.
-fun divideB(bitstring):bitstring.
-equation forall x:bitstring, n:nat; divideB(con(x,n)) = x.
-reduc forall x:bitstring, n:nat; divideN(con(x,n))=n.
+   out(m01,(w01));
+   out(m02,(w01,w02));
+   out(m03,(w01,w02,w03));
+   out(m04,(w04));
+   out(m11,(w11));
+   out(m12,(w11,w12));
+   out(m13,(w11,w12,w13));
+   out(m14,(w14));
+   
+   new D0:channel;
+   new D1:channel;
+   out(D0,(m01,m02,m03,m04));
+   out(D1,(m11,m12,m13,m14));
 
-let Serverprocess =
-  insert angouID(1,enc(m1,k2));   
-  insert angouID(2,enc(m2,k2));
-  insert angouID(3,enc(m3,k2));
-  insert angouID(4,enc(m4,k2));
-  insert angouID(5,enc(m5,k2));
-  insert Index(maketrap(con(w1,1),k1) , 1  );
-  insert Index(maketrap(con(w1,6),k1) , 2  );
-  insert Index(maketrap(con(w1,2),k1) , 5  );
-  insert Index(maketrap(con(w1,3),k1) , 3  );
-  insert Index(maketrap(con(w1,4),k1) , 4  );
-  insert Index(maketrap(con(w2,1),k1) , 1  );
-  insert Index(maketrap(con(w2,2),k1) , 2  );
-  insert Index(maketrap(con(w2,7),k1) , 3  );
-  insert Index(maketrap(con(w2,3),k1) , 5  );
-  insert Index(maketrap(con(w2,8),k1) , 4  );
-  insert Index(maketrap(con(w2,4),k1) , 5  );
-  insert Index(maketrap(con(w3,1),k1) , 1  );
-  insert Index(maketrap(con(w3,6),k1) , 2  );
-  insert Index(maketrap(con(w3,2),k1) , 5  );
-  insert Index(maketrap(con(w3,3),k1) , 3  );
-  insert Index(maketrap(con(w3,8),k1) , 4  );
-  insert Index(maketrap(con(w3,4),k1) , 5  );
-  insert Index(maketrap(con(w4,1),k1) , 5  );
-  insert Index(maketrap(con(w4,2),k1) , 5  );
-  insert Index(maketrap(con(w4,3),k1) , 5  );
-  insert Index(maketrap(con(w4,4),k1) , 5  );
-  insert Index(maketrap(con(w5,1),k1) , 5  );
-  insert Index(maketrap(con(w5,2),k1) , 5  );
-  insert Index(maketrap(con(w5,3),k1) , 5  );
-  insert Index(maketrap(con(w5,4),k1) , 5  ).
+   let cb1=enc(choice[m01,m11],skey) in
+   let cb2=enc(choice[m02,m12],skey) in
+   let cb3=enc(choice[m03,m13],skey) in
+   let cb4=enc(choice[m04,m14],skey) in
+   new Cb :channel;
+   out(Cb,(cb1,cb2,cb3,cb4));
 
-let SServer =
- in(ch, tw:trapdoor);
- get Index(=tw,id) in
-  get angouID(=id,c) in
-   out(ch,c).
+   new APb1 :channel;
+   new APb2 :channel;
+   new APb3 :channel;
+   new APb4 :channel;
+   out(APb1,cb1);out(APb1,cb2);out(APb1,cb3);
+   out(APb2,cb2);out(APb2,cb3);
+   out(APb3,cb3);
+   out(APb4,cb4);
 
-let ClientSEND (wq:bitstring) = 
- out(ch, maketrap(con(wq,1),k1));
- out(ch, maketrap(con(wq,2),k1));
- out(ch, maketrap(con(wq,3),k1));
- out(ch, maketrap(con(wq,4),k1)).
-
-
-let ClientSENDchoice (wq1:bitstring,wq2:bitstring) = 
- out(ch, choice[maketrap(con(wq1,1),k1),maketrap(con(wq2,1),k1)]);
- out(ch, choice[maketrap(con(wq1,2),k1),maketrap(con(wq2,2),k1)]);
- out(ch, choice[maketrap(con(wq1,3),k1),maketrap(con(wq2,3),k1)]);
- out(ch, choice[maketrap(con(wq1,4),k1),maketrap(con(wq2,4),k1)]).
-
-let ClientRES (mc:bitstring,mn:nat)  =
- in(ch, C:bitstring);
- let d=dec(C,k2) in
- (  
- if (d=mc) then 
-  event SUCCESS1
- else 0
-). 
-process ( (*ClientSEND(w3)*) ClientSENDchoice(w1,w3) 
- | ClientRES(m1,1) |ClientRES(m2,2) |ClientRES(m3,3) | Serverprocess | !SServer)
+   let Indexb1=BuildIndex(APb1,choice[w01,w11],skeyT) in
+   let Indexb2=BuildIndex(APb2,choice[w02,w12],skeyT) in
+   let Indexb3=BuildIndex(APb3,choice[w03,w13],skeyT) in
+   let Indexb4=BuildIndex(APb4,choice[w04,w14],skeyT) in
+   new Ib :channel;
+   out(Ib,(Indexb1,Indexb2,Indexb3,Indexb4));
+   out(CH,( D0,D1, W0,W1 ));
+   out(CH,( Cb,Ib ));
+   out(CH,Trapdoor(choice[w01,w11],skeyT));
+   out(CH,Trapdoor(choice[w02,w12],skeyT));
+   out(CH,Trapdoor(choice[w03,w13],skeyT));
+   out(CH,Trapdoor(choice[w04,w14],skeyT))
+)
