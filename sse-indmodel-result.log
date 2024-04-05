@@ -1,143 +1,104 @@
 Linear part: No equation.
 Convergent part:
 dec(enc(x,k),k) = x
-divideB(con(x,n)) = x
+Search(BuildIndex(Ap,w,kT),Trapdoor(w,kT)) = Ap
 Completing equations...
 Completed equations:
-divideB(con(x,n)) = x
+Search(BuildIndex(Ap,w,kT),Trapdoor(w,kT)) = Ap
 dec(enc(x,k),k) = x
 Biprocess 0 (that is, the initial process):
-(
-    {1}let wq1: bitstring = w1 in
-    {2}let wq2: bitstring = w3 in
-    {3}out(ch, maketrap(con(choice[wq1,wq2],1),k1));
-    {4}out(ch, maketrap(con(choice[wq1,wq2],2),k1));
-    {5}out(ch, maketrap(con(choice[wq1,wq2],3),k1));
-    {6}out(ch, maketrap(con(choice[wq1,wq2],4),k1))
-) | (
-    {7}let mc: bitstring = m1 in
-    {8}let mn: nat = 1 in
-    {9}in(ch, C: bitstring);
-    {10}let d: bitstring = dec(C,k2) in
-    {11}if (d = mc) then
-    {12}event SUCCESS1
-) | (
-    {13}let mc_1: bitstring = m2 in
-    {14}let mn_1: nat = 2 in
-    {15}in(ch, C_1: bitstring);
-    {16}let d_1: bitstring = dec(C_1,k2) in
-    {17}if (d_1 = mc_1) then
-    {18}event SUCCESS1
-) | (
-    {19}let mc_2: bitstring = m3 in
-    {20}let mn_2: nat = 3 in
-    {21}in(ch, C_2: bitstring);
-    {22}let d_2: bitstring = dec(C_2,k2) in
-    {23}if (d_2 = mc_2) then
-    {24}event SUCCESS1
-) | (
-    {25}insert angouID(1,enc(m1,k2));
-    {26}insert angouID(2,enc(m2,k2));
-    {27}insert angouID(3,enc(m3,k2));
-    {28}insert angouID(4,enc(m4,k2));
-    {29}insert angouID(5,enc(m5,k2));
-    {30}insert Index(maketrap(con(w1,1),k1),1);
-    {31}insert Index(maketrap(con(w1,6),k1),2);
-    {32}insert Index(maketrap(con(w1,2),k1),5);
-    {33}insert Index(maketrap(con(w1,3),k1),3);
-    {34}insert Index(maketrap(con(w1,4),k1),4);
-    {35}insert Index(maketrap(con(w2,1),k1),1);
-    {36}insert Index(maketrap(con(w2,2),k1),2);
-    {37}insert Index(maketrap(con(w2,7),k1),3);
-    {38}insert Index(maketrap(con(w2,3),k1),5);
-    {39}insert Index(maketrap(con(w2,8),k1),4);
-    {40}insert Index(maketrap(con(w2,4),k1),5);
-    {41}insert Index(maketrap(con(w3,1),k1),1);
-    {42}insert Index(maketrap(con(w3,6),k1),2);
-    {43}insert Index(maketrap(con(w3,2),k1),5);
-    {44}insert Index(maketrap(con(w3,3),k1),3);
-    {45}insert Index(maketrap(con(w3,8),k1),4);
-    {46}insert Index(maketrap(con(w3,4),k1),5);
-    {47}insert Index(maketrap(con(w4,1),k1),5);
-    {48}insert Index(maketrap(con(w4,2),k1),5);
-    {49}insert Index(maketrap(con(w4,3),k1),5);
-    {50}insert Index(maketrap(con(w4,4),k1),5);
-    {51}insert Index(maketrap(con(w5,1),k1),5);
-    {52}insert Index(maketrap(con(w5,2),k1),5);
-    {53}insert Index(maketrap(con(w5,3),k1),5);
-    {54}insert Index(maketrap(con(w5,4),k1),5)
-) | (
-    {55}!
-    {56}in(ch, tw: trapdoor);
-    {59}get Index(=tw,id: nat) in
-    {58}get angouID(=id,c: bitstring) in
-    {57}out(ch, c)
-)
+{1}new W0: channel;
+{2}new W1: channel;
+{3}out(W0, (w01,w02,w03,w04));
+{4}out(W1, (w11,w12,w13,w14));
+{5}out(m01, w01);
+{6}out(m02, (w01,w02));
+{7}out(m03, (w01,w02,w03));
+{8}out(m04, w04);
+{9}out(m11, w11);
+{10}out(m12, (w11,w12));
+{11}out(m13, (w11,w12,w13));
+{12}out(m14, w14);
+{13}new D0: channel;
+{14}new D1: channel;
+{15}out(D0, (m01,m02,m03,m04));
+{16}out(D1, (m11,m12,m13,m14));
+{17}let cb1: bitstring = enc(choice[m01,m11],skey) in
+{18}let cb2: bitstring = enc(choice[m02,m12],skey) in
+{19}let cb3: bitstring = enc(choice[m03,m13],skey) in
+{20}let cb4: bitstring = enc(choice[m04,m14],skey) in
+{21}new Cb: channel;
+{22}out(Cb, (cb1,cb2,cb3,cb4));
+{23}new APb1: channel;
+{24}new APb2: channel;
+{25}new APb3: channel;
+{26}new APb4: channel;
+{27}out(APb1, cb1);
+{28}out(APb1, cb2);
+{29}out(APb1, cb3);
+{30}out(APb2, cb2);
+{31}out(APb2, cb3);
+{32}out(APb3, cb3);
+{33}out(APb4, cb4);
+{34}let Indexb1: bitstring = BuildIndex(APb1,choice[w01,w11],skeyT) in
+{35}let Indexb2: bitstring = BuildIndex(APb2,choice[w02,w12],skeyT) in
+{36}let Indexb3: bitstring = BuildIndex(APb3,choice[w03,w13],skeyT) in
+{37}let Indexb4: bitstring = BuildIndex(APb4,choice[w04,w14],skeyT) in
+{38}new Ib: channel;
+{39}out(Ib, (Indexb1,Indexb2,Indexb3,Indexb4));
+{40}out(CH, (D0,D1,W0,W1));
+{41}out(CH, (Cb,Ib));
+{42}out(CH, Trapdoor(choice[w01,w11],skeyT));
+{43}out(CH, Trapdoor(choice[w02,w12],skeyT));
+{44}out(CH, Trapdoor(choice[w03,w13],skeyT));
+{45}out(CH, Trapdoor(choice[w04,w14],skeyT))
 
 -- Observational equivalence in biprocess 1 (that is, biprocess 0, with let moved downwards):
-(
-    {2}let wq2: bitstring = w3 in
-    {1}let wq1: bitstring = w1 in
-    {3}out(ch, maketrap(con(choice[wq1,wq2],1),k1));
-    {4}out(ch, maketrap(con(choice[wq1,wq2],2),k1));
-    {5}out(ch, maketrap(con(choice[wq1,wq2],3),k1));
-    {6}out(ch, maketrap(con(choice[wq1,wq2],4),k1))
-) | (
-    {9}in(ch, C: bitstring);
-    {10}let d: bitstring = dec(C,k2) in
-    {7}let mc: bitstring = m1 in
-    {11}if (d = mc) then
-    {12}event SUCCESS1
-) | (
-    {15}in(ch, C_1: bitstring);
-    {16}let d_1: bitstring = dec(C_1,k2) in
-    {13}let mc_1: bitstring = m2 in
-    {17}if (d_1 = mc_1) then
-    {18}event SUCCESS1
-) | (
-    {21}in(ch, C_2: bitstring);
-    {22}let d_2: bitstring = dec(C_2,k2) in
-    {19}let mc_2: bitstring = m3 in
-    {23}if (d_2 = mc_2) then
-    {24}event SUCCESS1
-) | (
-    {25}insert angouID(1,enc(m1,k2));
-    {26}insert angouID(2,enc(m2,k2));
-    {27}insert angouID(3,enc(m3,k2));
-    {28}insert angouID(4,enc(m4,k2));
-    {29}insert angouID(5,enc(m5,k2));
-    {30}insert Index(maketrap(con(w1,1),k1),1);
-    {31}insert Index(maketrap(con(w1,6),k1),2);
-    {32}insert Index(maketrap(con(w1,2),k1),5);
-    {33}insert Index(maketrap(con(w1,3),k1),3);
-    {34}insert Index(maketrap(con(w1,4),k1),4);
-    {35}insert Index(maketrap(con(w2,1),k1),1);
-    {36}insert Index(maketrap(con(w2,2),k1),2);
-    {37}insert Index(maketrap(con(w2,7),k1),3);
-    {38}insert Index(maketrap(con(w2,3),k1),5);
-    {39}insert Index(maketrap(con(w2,8),k1),4);
-    {40}insert Index(maketrap(con(w2,4),k1),5);
-    {41}insert Index(maketrap(con(w3,1),k1),1);
-    {42}insert Index(maketrap(con(w3,6),k1),2);
-    {43}insert Index(maketrap(con(w3,2),k1),5);
-    {44}insert Index(maketrap(con(w3,3),k1),3);
-    {45}insert Index(maketrap(con(w3,8),k1),4);
-    {46}insert Index(maketrap(con(w3,4),k1),5);
-    {47}insert Index(maketrap(con(w4,1),k1),5);
-    {48}insert Index(maketrap(con(w4,2),k1),5);
-    {49}insert Index(maketrap(con(w4,3),k1),5);
-    {50}insert Index(maketrap(con(w4,4),k1),5);
-    {51}insert Index(maketrap(con(w5,1),k1),5);
-    {52}insert Index(maketrap(con(w5,2),k1),5);
-    {53}insert Index(maketrap(con(w5,3),k1),5);
-    {54}insert Index(maketrap(con(w5,4),k1),5)
-) | (
-    {55}!
-    {56}in(ch, tw: trapdoor);
-    {59}get Index(=tw,id: nat) in
-    {58}get angouID(=id,c: bitstring) in
-    {57}out(ch, c)
-)
+{1}new W0: channel;
+{2}new W1: channel;
+{3}out(W0, (w01,w02,w03,w04));
+{4}out(W1, (w11,w12,w13,w14));
+{5}out(m01, w01);
+{6}out(m02, (w01,w02));
+{7}out(m03, (w01,w02,w03));
+{8}out(m04, w04);
+{9}out(m11, w11);
+{10}out(m12, (w11,w12));
+{11}out(m13, (w11,w12,w13));
+{12}out(m14, w14);
+{13}new D0: channel;
+{14}new D1: channel;
+{15}out(D0, (m01,m02,m03,m04));
+{16}out(D1, (m11,m12,m13,m14));
+{21}new Cb: channel;
+{20}let cb4: bitstring = enc(choice[m04,m14],skey) in
+{19}let cb3: bitstring = enc(choice[m03,m13],skey) in
+{18}let cb2: bitstring = enc(choice[m02,m12],skey) in
+{17}let cb1: bitstring = enc(choice[m01,m11],skey) in
+{22}out(Cb, (cb1,cb2,cb3,cb4));
+{23}new APb1: channel;
+{24}new APb2: channel;
+{25}new APb3: channel;
+{26}new APb4: channel;
+{27}out(APb1, cb1);
+{28}out(APb1, cb2);
+{29}out(APb1, cb3);
+{30}out(APb2, cb2);
+{31}out(APb2, cb3);
+{32}out(APb3, cb3);
+{33}out(APb4, cb4);
+{38}new Ib: channel;
+{37}let Indexb4: bitstring = BuildIndex(APb4,choice[w04,w14],skeyT) in
+{36}let Indexb3: bitstring = BuildIndex(APb3,choice[w03,w13],skeyT) in
+{35}let Indexb2: bitstring = BuildIndex(APb2,choice[w02,w12],skeyT) in
+{34}let Indexb1: bitstring = BuildIndex(APb1,choice[w01,w11],skeyT) in
+{39}out(Ib, (Indexb1,Indexb2,Indexb3,Indexb4));
+{40}out(CH, (D0,D1,W0,W1));
+{41}out(CH, (Cb,Ib));
+{42}out(CH, Trapdoor(choice[w01,w11],skeyT));
+{43}out(CH, Trapdoor(choice[w02,w12],skeyT));
+{44}out(CH, Trapdoor(choice[w03,w13],skeyT));
+{45}out(CH, Trapdoor(choice[w04,w14],skeyT))
 
 Translating the process into Horn clauses...
 Termination warning: v ≠ v_1 && attacker2(v_2,v) && attacker2(v_2,v_1) -> bad
@@ -149,271 +110,12 @@ Termination warning: v ≠ v_1 && attacker2(v_2,v) && attacker2(v_2,v_1) -> bad
 Selecting 0
 Termination warning: v ≠ v_1 && attacker2(v,v_2) && attacker2(v_1,v_2) -> bad
 Selecting 0
-goal reachable: bad
-
-Derivation:
-
-1. The message maketrap(con(w1,4),k1[]) (resp. maketrap(con(w3[],4),k1[])) may be sent to the attacker at output {6}.
-attacker2(maketrap(con(w1,4),k1[]),maketrap(con(w3[],4),k1[])).
-
-2. The entry Index(maketrap(con(w1,4),k1[]),4) (resp. Index(maketrap(con(w1,4),k1[]),4)) may be inserted in a table at insert {34}.
-table2(Index(maketrap(con(w1,4),k1[]),4),Index(maketrap(con(w1,4),k1[]),4)).
-
-3. The message maketrap(con(w1,4),k1[]) (resp. maketrap(con(w3[],4),k1[])) that the attacker may have by 1 may be received at input {56}.
-The entry Index(maketrap(con(w1,4),k1[]),4) (resp. Index(maketrap(con(w1,4),k1[]),4)) that may be in a table by 2 may be read at get {59}.
-We have (forall @gen, Index(maketrap(con(w1,4),k1[]),4) ≠ Index(maketrap(con(w3[],4),k1[]),@gen)).
-So the attacker can make a distinguishing test at {59}.
-bad.
-
-
-Initial state
-
-Additional knowledge of the attacker:
-ch
---------------------------------------------------------------
-New processes:
-    (
-        let wq2: bitstring = w3 in
-        let wq1: bitstring = w1 in
-        out(ch, maketrap(con(choice[wq1,wq2],1),k1));
-        out(ch, maketrap(con(choice[wq1,wq2],2),k1));
-        out(ch, maketrap(con(choice[wq1,wq2],3),k1));
-        out(ch, maketrap(con(choice[wq1,wq2],4),k1))
-    ) | (
-        in(ch, C: bitstring);
-        let d: bitstring = dec(C,k2) in
-        let mc: bitstring = m1 in
-        if (d = mc) then
-        event SUCCESS1
-    ) | (
-        in(ch, C_1: bitstring);
-        let d_1: bitstring = dec(C_1,k2) in
-        let mc_1: bitstring = m2 in
-        if (d_1 = mc_1) then
-        event SUCCESS1
-    ) | (
-        in(ch, C_2: bitstring);
-        let d_2: bitstring = dec(C_2,k2) in
-        let mc_2: bitstring = m3 in
-        if (d_2 = mc_2) then
-        event SUCCESS1
-    ) | (
-        insert angouID(1,enc(m1,k2));
-        insert angouID(2,enc(m2,k2));
-        insert angouID(3,enc(m3,k2));
-        insert angouID(4,enc(m4,k2));
-        insert angouID(5,enc(m5,k2));
-        insert Index(maketrap(con(w1,1),k1),1);
-        insert Index(maketrap(con(w1,6),k1),2);
-        insert Index(maketrap(con(w1,2),k1),5);
-        insert Index(maketrap(con(w1,3),k1),3);
-        insert Index(maketrap(con(w1,4),k1),4);
-        insert Index(maketrap(con(w2,1),k1),1);
-        insert Index(maketrap(con(w2,2),k1),2);
-        insert Index(maketrap(con(w2,7),k1),3);
-        insert Index(maketrap(con(w2,3),k1),5);
-        insert Index(maketrap(con(w2,8),k1),4);
-        insert Index(maketrap(con(w2,4),k1),5);
-        insert Index(maketrap(con(w3,1),k1),1);
-        insert Index(maketrap(con(w3,6),k1),2);
-        insert Index(maketrap(con(w3,2),k1),5);
-        insert Index(maketrap(con(w3,3),k1),3);
-        insert Index(maketrap(con(w3,8),k1),4);
-        insert Index(maketrap(con(w3,4),k1),5);
-        insert Index(maketrap(con(w4,1),k1),5);
-        insert Index(maketrap(con(w4,2),k1),5);
-        insert Index(maketrap(con(w4,3),k1),5);
-        insert Index(maketrap(con(w4,4),k1),5);
-        insert Index(maketrap(con(w5,1),k1),5);
-        insert Index(maketrap(con(w5,2),k1),5);
-        insert Index(maketrap(con(w5,3),k1),5);
-        insert Index(maketrap(con(w5,4),k1),5)
-    ) | (
-        !
-        in(ch, tw: trapdoor);
-        get Index(=tw,id: nat) in
-        get angouID(=id,c: bitstring) in
-        out(ch, c)
-    )
-
---------------------------------------------------------------
-1st process: Reduction |
-
-2nd process: Reduction |
-
-3rd process: Reduction |
-
-4th process: Reduction |
-
-5th process: Reduction |
-
-6th process: Reduction ! 1 copy(ies)
-
-6th process: Beginning of process SServer
-
-5th process: Beginning of process Serverprocess
-
-5th process: insert angouID(1,enc(m1,k2)) done
-
-5th process: insert angouID(2,enc(m2,k2)) done
-
-5th process: insert angouID(3,enc(m3,k2)) done
-
-5th process: insert angouID(4,enc(m4,k2)) done
-
-5th process: insert angouID(5,enc(m5,k2)) done
-
-5th process: insert Index(maketrap(con(w1,1),k1),1) done
-
-5th process: insert Index(maketrap(con(w1,6),k1),2) done
-
-5th process: insert Index(maketrap(con(w1,2),k1),5) done
-
-5th process: insert Index(maketrap(con(w1,3),k1),3) done
-
-5th process: insert Index(maketrap(con(w1,4),k1),4) done
-
-5th process: insert Index(maketrap(con(w2,1),k1),1) done
-
-5th process: insert Index(maketrap(con(w2,2),k1),2) done
-
-5th process: insert Index(maketrap(con(w2,7),k1),3) done
-
-5th process: insert Index(maketrap(con(w2,3),k1),5) done
-
-5th process: insert Index(maketrap(con(w2,8),k1),4) done
-
-5th process: insert Index(maketrap(con(w2,4),k1),5) done
-
-5th process: insert Index(maketrap(con(w3,1),k1),1) done
-
-5th process: insert Index(maketrap(con(w3,6),k1),2) done
-
-5th process: insert Index(maketrap(con(w3,2),k1),5) done
-
-5th process: insert Index(maketrap(con(w3,3),k1),3) done
-
-5th process: insert Index(maketrap(con(w3,8),k1),4) done
-
-5th process: insert Index(maketrap(con(w3,4),k1),5) done
-
-5th process: insert Index(maketrap(con(w4,1),k1),5) done
-
-5th process: insert Index(maketrap(con(w4,2),k1),5) done
-
-5th process: insert Index(maketrap(con(w4,3),k1),5) done
-
-5th process: insert Index(maketrap(con(w4,4),k1),5) done
-
-5th process: insert Index(maketrap(con(w5,1),k1),5) done
-
-5th process: insert Index(maketrap(con(w5,2),k1),5) done
-
-5th process: insert Index(maketrap(con(w5,3),k1),5) done
-
-5th process: insert Index(maketrap(con(w5,4),k1),5) done
-
-5th process: Reduction 0
-
-4th process: Beginning of process ClientRES
-
-3rd process: Beginning of process ClientRES
-
-2nd process: Beginning of process ClientRES
-
-1st process: Beginning of process ClientSENDchoice
-
-1st process: let wq2: bitstring = w3 succeeds
-
-1st process: let wq1: bitstring = w1 succeeds
-
-1st process: out(ch, ~M) with ~M = maketrap(con(choice[w1,w3],1),k1) done
-
-Additional knowledge of the attacker:
-~M = maketrap(con(choice[w1,w3],1),k1)
---------------------------------------------------------------
-1st process: out(ch, ~M_1) with ~M_1 = maketrap(con(choice[w1,w3],2),k1) done
-
-Additional knowledge of the attacker:
-~M_1 = maketrap(con(choice[w1,w3],2),k1)
---------------------------------------------------------------
-1st process: out(ch, ~M_2) with ~M_2 = maketrap(con(choice[w1,w3],3),k1) done
-
-Additional knowledge of the attacker:
-~M_2 = maketrap(con(choice[w1,w3],3),k1)
---------------------------------------------------------------
-1st process: out(ch, ~M_3) with ~M_3 = maketrap(con(choice[w1,w3],4),k1) done
-
-Additional knowledge of the attacker:
-~M_3 = maketrap(con(choice[w1,w3],4),k1)
---------------------------------------------------------------
-1st process: Reduction 0
-
-New processes:
-(
-    in(ch, C: bitstring);
-    let d: bitstring = dec(C,k2) in
-    let mc: bitstring = m1 in
-    if (d = mc) then
-    event SUCCESS1
-) | (
-    in(ch, C_1: bitstring);
-    let d_1: bitstring = dec(C_1,k2) in
-    let mc_1: bitstring = m2 in
-    if (d_1 = mc_1) then
-    event SUCCESS1
-) | (
-    in(ch, C_2: bitstring);
-    let d_2: bitstring = dec(C_2,k2) in
-    let mc_2: bitstring = m3 in
-    if (d_2 = mc_2) then
-    event SUCCESS1
-) | (
-    in(ch, tw: trapdoor);
-    get Index(=tw,id: nat) in
-    get angouID(=id,c: bitstring) in
-    out(ch, c)
-)
-
---------------------------------------------------------------
-4th process: in(ch, tw: trapdoor) done with message ~M_3 = maketrap(con(choice[w1,w3],4),k1)
-
-New processes:
-(
-    in(ch, C: bitstring);
-    let d: bitstring = dec(C,k2) in
-    let mc: bitstring = m1 in
-    if (d = mc) then
-    event SUCCESS1
-) | (
-    in(ch, C_1: bitstring);
-    let d_1: bitstring = dec(C_1,k2) in
-    let mc_1: bitstring = m2 in
-    if (d_1 = mc_1) then
-    event SUCCESS1
-) | (
-    in(ch, C_2: bitstring);
-    let d_2: bitstring = dec(C_2,k2) in
-    let mc_2: bitstring = m3 in
-    if (d_2 = mc_2) then
-    event SUCCESS1
-) | (
-    get Index(=maketrap(con(choice[w1,w3],4),k1),id: nat) in
-    get angouID(=id,c: bitstring) in
-    out(ch, c)
-)
-
---------------------------------------------------------------
-The 4th process performs a test that may succeed on one side and not on the other.
-A trace has been found.
-RESULT Observational equivalence cannot be proved.
-Looking for simplified processes ...
-No simplified process found.
+200 rules inserted. Base: 171 rules (68 with conclusion selected). Queue: 2 rules.
+RESULT Observational equivalence is true.
 
 --------------------------------------------------------------
 Verification summary:
 
-Observational equivalence cannot be proved.
+Observational equivalence is true.
 
 --------------------------------------------------------------
-
